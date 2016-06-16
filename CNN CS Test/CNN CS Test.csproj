@@ -54,20 +54,11 @@
     </Compile>
     <None Include="bin\Debug\manopencl32.dll" />
     <None Include="bin\Debug\trump.png" />
-    <Content Include="dennis\clutuil.translated.cs" />
-    <Content Include="dennis\senpai.translated.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="dennis\Convolver.c">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="dennis\CLUtil.java" />
-    <Content Include="dennis\SenpAI.java" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

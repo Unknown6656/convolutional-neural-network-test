@@ -4,6 +4,6 @@ B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\cstest32.pdb
 B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\CNN CS Test.csprojResolveAssemblyReference.cache
 B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\cstest32.exe
 B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\cstest32.pdb
-B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\dennis\Convolver.c
-B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\manopencl32.dll
 B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\manopencl32.pdb
+B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\CNN.Properties.Resources.resources
+B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\CNN CS Test.csproj.GenerateResource.Cache
