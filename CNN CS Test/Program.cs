@@ -16,10 +16,8 @@ using res = CNN.Properties.Resources;
 
 namespace CNN
 {
-
     public static unsafe class Program
     {
-
         public static int Main(string[] args)
         {
             try
