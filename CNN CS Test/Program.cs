@@ -11,58 +11,73 @@ using ManOCL.Internal;
 using ManOCL.IO;
 using ManOCL;
 
-using bmpdata = System.Tuple<byte[], System.Drawing.Imaging.BitmapData>;
 using res = CNN.Properties.Resources;
 
 namespace CNN
 {
     public static unsafe class Program
     {
+        // "convolver.c", "convolveKernel"
+        public static readonly Tuple<string, string> Method = new Tuple<string, string>("tests/invertcolors.c", "invert");
+
         public static int Main(string[] args)
         {
             try
             {
-                CLTest();
+                const int SIZE = 2000;
+                string fname = "img-" + DateTime.Now.Ticks;
 
+                using (Bitmap srcimg = new Bitmap(SIZE, SIZE, PixelFormat.Format32bppArgb))
+                using (Bitmap dstimg = new Bitmap(SIZE, SIZE, srcimg.PixelFormat))
+                {
+                    srcimg.ResizeDraw(res.trump, SIZE);
+
+                    BitmapData srcdat = srcimg.LockBits(SIZE);
+                    byte[] srcarr = new byte[srcdat.Stride * srcdat.Height];
+
+                    Marshal.Copy(srcdat.Scan0, srcarr, 0, srcarr.Length);
+
+                    DeviceGlobalMemory src = srcarr;
+                    DeviceGlobalMemory dst = new byte[srcarr.Length];
+                    DeviceGlobalMemory krnl = new int[] { -1, 0, 1,
+                                                          -2, 0, 2,
+                                                          -1, 0, 1 };
+                    DeviceGlobalMemory wdh = new int[] { SIZE };
+
+                    Kernel kernel = Kernel.Create(Method.Item2, File.ReadAllText(Method.Item1), src, dst, krnl, wdh);
+                    Event evt = kernel.Execute(256, 256);
+
+                    kernel.CommandQueue.Finish();
+
+                    BitmapData dstdat = dstimg.LockBits(SIZE);
+
+                    using (DeviceBufferStream dbs = new DeviceBufferStream(dst))
+                    {
+                        UnmanagedReader urd = new UnmanagedReader(dbs);
+
+                        urd.Read(srcarr, 0, srcarr.Length);
+
+                        byte* ptr = (byte*)dstdat.Scan0;
+
+                        fixed (byte* sptr = srcarr)
+                            for (int i = 0, l = srcarr.Length; i < l; i++)
+                                ptr[i] = sptr[i];
+                    }
+
+                    srcimg.UnlockBits(srcdat);
+                    dstimg.UnlockBits(dstdat);
+                    srcimg.Save(fname + "-org.png", ImageFormat.Png);
+                    dstimg.Save(fname + ".png", ImageFormat.Png);
+
+                    Console.WriteLine("Done, operation took {0}", Profiler.DurationSeconds(evt));
+                }
                 return 0;
             }
             catch (Exception e)
             {
                 Console.WriteLine("nope: {0}\n{1}\n{2}\n{3}", e.Message, e.StackTrace, e.HResult, e.Source);
-
+                Console.ReadKey(true);
                 return -1;
-            }
-        }
-
-        public static void CLTest()
-        {
-            const int SIZE = 2000;
-            string fname = "img-" + DateTime.Now.Ticks;
-
-            using (Bitmap srcimg = new Bitmap(SIZE, SIZE) { Palette = Get8BitGrayScale() })
-            using (Bitmap dstimg = new Bitmap(SIZE, SIZE) { Palette = Get8BitGrayScale() })
-            {
-                srcimg.ResizeDraw(res.trump, SIZE);
-
-                bmpdata srcdat = srcimg.LockBits(SIZE);
-                bmpdata dstdat = dstimg.LockBits(SIZE);
-
-                DeviceGlobalMemory src = srcdat.Item1;
-                DeviceGlobalMemory dst = dstdat.Item1;
-                DeviceGlobalMemory krnl = new int[] { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
-                DeviceGlobalMemory wdh = new int[] { SIZE };
-
-                Kernel kernel = Kernel.Create("convolveKernel", File.ReadAllText("convolver.c"), src, dst, krnl, wdh);
-                Event evt = kernel.Execute(256, 256);
-
-                kernel.CommandQueue.Finish();
-
-                Console.WriteLine("Done, operation took {0}", Profiler.DurationSeconds(evt));
-
-                srcimg.UnlockBits(srcdat.Item2);
-                dstimg.UnlockBits(dstdat.Item2);
-                srcimg.Save(fname + "-org.png", ImageFormat.Png);
-                dstimg.Save(fname + ".png", ImageFormat.Png);
             }
         }
 
@@ -78,14 +93,9 @@ namespace CNN
             }
         }
 
-        public static bmpdata LockBits(this Bitmap bmp, int size)
+        public static BitmapData LockBits(this Bitmap bmp, int size)
         {
-            BitmapData dat = bmp.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.ReadWrite, bmp.PixelFormat);
-            byte[] arr = new byte[size * size];
-
-            Marshal.Copy(dat.Scan0, arr, 0, size * size);
-
-            return new bmpdata(arr, dat);
+            return bmp.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.ReadWrite, bmp.PixelFormat);
         }
 
         // C# only has 16Bit-Grayscale or 8Bit-Colors defined -- not 8Bit-Grayscale

@@ -1,5 +1,7 @@
+// COPYRIGHT (C) WICKERSOFT, 2016
+
 __kernel void convolveKernel(__global char* source, __global char* dest, __global int* krnl, __global int* width)
-{    
+{
     int id = get_global_id(0);
     int wid = width[0];
     int x = id % wid;
