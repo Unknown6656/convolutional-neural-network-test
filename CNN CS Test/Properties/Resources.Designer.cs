@@ -61,6 +61,35 @@ namespace CNN.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die __kernel void convolveKernel(__global char* source, __global char* dest, __global int* krnl, __global int* width)
+        ///{    
+        ///    int id = get_global_id(0);
+        ///    int wid = width[0];
+        ///    int x = id % wid;
+        ///    int y = id / wid;
+        ///    int out = krnl[4] * source[id];
+        ///
+        ///    if (x &gt; 0)
+        ///	{
+        ///        out += krnl[3] * source[id - 1];
+        ///
+        ///        if (y &gt; 0)
+        ///            out += krnl[0] * source[id - 1 - wid];
+        ///        if (y &lt; wid - 1)
+        ///            out += krnl[6] * source[id - 1 + wid];
+        ///    }
+        ///
+        ///	if (x &lt; wid - 1)
+        ///	{
+        ///        out += krnl[5] [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string convolver {
+            get {
+                return ResourceManager.GetString("convolver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
         internal static byte[] manopencl32 {

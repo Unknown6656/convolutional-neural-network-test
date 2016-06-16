@@ -8,7 +8,7 @@ __kernel void convolveKernel(__global char* source, __global char* dest, __globa
 
     if (x > 0)
 	{
-        out += krnl[3] * source[id - 1];
+		out += krnl[3] * source[id - 1];
 
         if (y > 0)
             out += krnl[0] * source[id - 1 - wid];

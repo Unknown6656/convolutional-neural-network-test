@@ -11,8 +11,8 @@ using ManOCL.Internal;
 using ManOCL.IO;
 using ManOCL;
 
-using bmpdata = global::System.Tuple<byte[], global::System.Drawing.Imaging.BitmapData>;
-using res = global::CNN.Properties.Resources;
+using bmpdata = System.Tuple<byte[], System.Drawing.Imaging.BitmapData>;
+using res = CNN.Properties.Resources;
 
 namespace CNN
 {
@@ -39,6 +39,7 @@ namespace CNN
         public static void CLTest()
         {
             const int SIZE = 2000;
+            string fname = "img-" + DateTime.Now.Ticks;
 
             using (Bitmap srcimg = new Bitmap(SIZE, SIZE) { Palette = Get8BitGrayScale() })
             using (Bitmap dstimg = new Bitmap(SIZE, SIZE) { Palette = Get8BitGrayScale() })
@@ -62,7 +63,8 @@ namespace CNN
 
                 srcimg.UnlockBits(srcdat.Item2);
                 dstimg.UnlockBits(dstdat.Item2);
-                dstimg.Save(DateTime.Now.Ticks + ".png", ImageFormat.Png);
+                srcimg.Save(fname + "-org.png", ImageFormat.Png);
+                dstimg.Save(fname + ".png", ImageFormat.Png);
             }
         }
 
@@ -70,14 +72,11 @@ namespace CNN
         {
             using (Graphics g = Graphics.FromImage(target))
             {
-                float sc = Math.Max(size / src.Height, size / src.Width);
-                float h = sc * src.Height;
-                float w = sc * src.Width;
-                float y = Math.Min((size - h) / 2, 0);
-                float x = Math.Min((size - w) / 2, 0);
+                float r = src.Width / (float)src.Height;
+                float w = r >= 1 ? size : size / r;
 
                 g.SmoothingMode = SmoothingMode.HighQuality;
-                g.DrawImage(src, x, y, w, h);
+                g.DrawImage(src, 0, 0, w, w / r);
             }
         }
 
