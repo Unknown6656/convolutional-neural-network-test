@@ -18,14 +18,14 @@ namespace CNN
     public static unsafe class Program
     {
         // "convolver.c", "convolveKernel"
-        public static readonly Tuple<string, string> METHOD = new Tuple<string, string>("tests/invertcolors.c", "invert");
+        public static readonly Tuple<string, string> METHOD = new Tuple<string, string>("tests/colors.c", "applymatrix");
         public const PixelFormat PIXEL_FORMAT = PixelFormat.Format24bppRgb;
 
         public static int Main(string[] args)
         {
             try
             {
-                const int SIZE = 2000;
+                const int SIZE = 500;
                 string fname = "img-" + DateTime.Now.Ticks;
 
                 using (Bitmap srcimg = new Bitmap(SIZE, SIZE, PIXEL_FORMAT))
@@ -40,12 +40,13 @@ namespace CNN
 
                     DeviceGlobalMemory src = srcarr;
                     DeviceGlobalMemory dst = new byte[srcarr.Length];
-                    DeviceGlobalMemory krnl = new int[] { -1, 0, 1,
-                                                          -2, 0, 2,
-                                                          -1, 0, 1 };
+                    DeviceGlobalMemory krnl = new byte[] { 0xff, 0x00, 0x00,
+                                                           0x00, 0xff, 0x00,
+                                                           0x00, 0x00, 0xff };
                     DeviceGlobalMemory wdh = new int[] { SIZE };
+                    DeviceGlobalMemory psz = new int[] { 3 };
 
-                    Kernel kernel = Kernel.Create(METHOD.Item2, File.ReadAllText(METHOD.Item1), src, dst, krnl, wdh);
+                    Kernel kernel = Kernel.Create(METHOD.Item2, File.ReadAllText(METHOD.Item1), src, dst, krnl, wdh, psz);
                     Event evt = kernel.Execute(srcarr.Length, 1);
 
                     kernel.CommandQueue.Finish();
@@ -59,10 +60,10 @@ namespace CNN
                         Marshal.Copy(srcarr, 0, dstdat.Scan0, srcarr.Length);
                     }
 
-                    srcimg.UnlockBits(srcdat);
                     dstimg.UnlockBits(dstdat);
-                    srcimg.Save(fname + "-org.png", ImageFormat.Png);
+                    srcimg.UnlockBits(srcdat);
                     dstimg.Save(fname + ".png", ImageFormat.Png);
+                    srcimg.Save(fname + "-org.png", ImageFormat.Png);
 
                     Console.WriteLine("Done, operation took {0}", Profiler.DurationSeconds(evt));
                 }

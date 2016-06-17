@@ -7,4 +7,4 @@ B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\cstest32.pdb
 B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\manopencl32.pdb
 B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\CNN.Properties.Resources.resources
 B:\Projects.VisualStudio\CNN\CNN CS Test\obj\Debug\CNN CS Test.csproj.GenerateResource.Cache
-B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\tests\invertcolors.c
+B:\Projects.VisualStudio\CNN\CNN CS Test\bin\Debug\tests\colors.c

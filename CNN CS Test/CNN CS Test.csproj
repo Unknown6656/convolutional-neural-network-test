@@ -56,7 +56,7 @@
     <None Include="bin\Debug\trump.png" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="tests\invertcolors.c">
+    <Content Include="tests\colors.c">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
