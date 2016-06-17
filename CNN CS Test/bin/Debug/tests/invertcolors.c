@@ -4,6 +4,6 @@ __kernel void invert(__global char* source, __global char* dest, __global int* k
 {
 	int id = get_global_id(0);
 
-	dest[id] = 255 - source[id];
-	dest[id] = 128;
+	if (id % 4 != 3)
+		dest[id] = 255 - source[id];
 }
