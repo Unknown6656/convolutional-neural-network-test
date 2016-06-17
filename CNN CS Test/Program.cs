@@ -19,13 +19,13 @@ namespace CNN
     {
         // "convolver.c", "convolveKernel"
         public static readonly Tuple<string, string> METHOD = new Tuple<string, string>("tests/invertcolors.c", "invert");
-        public const PixelFormat PIXEL_FORMAT = PixelFormat.Format32bppArgb;
+        public const PixelFormat PIXEL_FORMAT = PixelFormat.Format24bppRgb;
 
         public static int Main(string[] args)
         {
             try
             {
-                const int SIZE = 500; // 2000;
+                const int SIZE = 2000;
                 string fname = "img-" + DateTime.Now.Ticks;
 
                 using (Bitmap srcimg = new Bitmap(SIZE, SIZE, PIXEL_FORMAT))
@@ -46,7 +46,7 @@ namespace CNN
                     DeviceGlobalMemory wdh = new int[] { SIZE };
 
                     Kernel kernel = Kernel.Create(METHOD.Item2, File.ReadAllText(METHOD.Item1), src, dst, krnl, wdh);
-                    Event evt = kernel.Execute(512, 512); // <-- somehow unable to process more than the first 512 bytes...
+                    Event evt = kernel.Execute(srcarr.Length, 1);
 
                     kernel.CommandQueue.Finish();
 
